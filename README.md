@@ -5,7 +5,7 @@
 #
 # 21 juin 2024
 #
-# Script de syncronisation avec rsync.
+# Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
 # Vérification de l'espace disque disponible avant sauvegarde.
 # Vérifiaction du nombre d'éléments modifiés avant sauvegarde, valeur maximum configurable en pourcentage.
