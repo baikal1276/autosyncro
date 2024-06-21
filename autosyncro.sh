@@ -205,7 +205,7 @@ elif [ "$ELEMENTS" -eq 0 ]; then
 # Lancement de la sauvegarde
 #
 else
-    echo -e "${GREEN}Backup en cours${ENDCOLOR}"
+    echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
     rsync -arhv --exclude $EXCLUDE --progress -e "ssh -p $PORT" $SOURCE $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
@@ -262,7 +262,7 @@ elif [ "$ELEMENTS" -eq 0 ]; then
 # Lancement de la sauvegarde
 #
 else
-    echo -e "${GREEN}Backup en cours${ENDCOLOR}"
+    echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
     rsync -arhv --exclude $EXCLUDE --progress $SOURCE -e "ssh -p $PORT" $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
@@ -313,7 +313,7 @@ elif [ "$ELEMENTS" -eq 0 ]; then
 # Lancement de la sauvegarde
 #
 else
-    echo -e "${GREEN}Backup en cours${ENDCOLOR}"
+    echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
     rsync -arhv --exclude $EXCLUDE --progress $SOURCE $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
