@@ -101,7 +101,7 @@ else
     echo -e "${GREEN}Le serveur $SERVER répond${ENDCOLOR}"
 fi
 # Vérification de la présence du dossier source distant
-ssh -p $PORT $SERVER "ls $DIRECT > /dev/null 2>&1" > /dev/null 2>&1
+ssh -p $PORT "$SSHUSER@$SERVER" "ls $DIRECT > /dev/null 2>&1" > /dev/null 2>&1
 if [[ $? != 0 ]]; then
     echo -e "${RED}Le dossier $DIRECT n'existe pas sur $SERVER ou est inaccessible par $SSHUSER${ENCOLOR}"
     warning_mail
@@ -131,7 +131,7 @@ else
     echo -e "${GREEN}Le serveur $SERVER répond${ENDCOLOR}"
 fi
 # Vérification de la présence du dossier de destination distant
-ssh -p $PORT $SERVER "ls $DIRECT > /dev/null 2>&1" > /dev/null 2>&1
+ssh -p $PORT "$SSHUSER@$SERVER" "ls $DIRECT > /dev/null 2>&1" > /dev/null 2>&1
 if [[ $? != 0 ]]; then
     echo -e "${RED}Le dossier $DIRECT n'existe pas sur $SERVER ou est inaccessible par $SSHUSER${ENCOLOR}"
     warning_mail
