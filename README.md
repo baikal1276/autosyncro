@@ -1,7 +1,7 @@
 # AutoSyncro
 # Version 1.0
 #
-# Par Baikal276
+# Par Baikal1276
 #
 # 21 juin 2024
 #
