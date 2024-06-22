@@ -109,7 +109,7 @@ if [[ $? != 0 ]]; then
 fi
 # Vérification de la présence du dossier de destination local
 if [[ ! -d "$DESTINATION" ]]; then
-    echo -e "${RED}Le dossier $DESTINATION n'existe pas${ENCOLOR}"
+    echo -e "${RED}Le dossier $DESTINATION n'existe pas${ENDCOLOR}"
     warning_mail
     exit 2
 fi
