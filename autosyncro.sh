@@ -133,7 +133,7 @@ fi
 # Vérification de la présence du dossier de destination distant
 ssh -p $PORT "$SSHUSER@$SERVER" "ls $DIRECT > /dev/null 2>&1" > /dev/null 2>&1
 if [[ $? != 0 ]]; then
-    echo -e "${RED}Le dossier $DIRECT n'existe pas sur $SERVER ou est inaccessible par $SSHUSER${ENCOLOR}"
+    echo -e "${RED}Le dossier $DIRECT n'existe pas sur $SERVER ou est inaccessible par $SSHUSER${ENDCOLOR}"
     warning_mail
     exit 2
 fi
