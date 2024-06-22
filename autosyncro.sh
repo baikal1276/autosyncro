@@ -94,7 +94,7 @@ declare -r SSHUSER=$(echo $SOURCE | cut -d ':' -f1 | cut -d '@' -f1)
 # Vérification de la disponibilité du serveur
 ping -c 2 $SERVER >> $LOG_FILE
 if [[ $? != 0 ]]; then 
-    echo -e "${RED}Le serveur $SERVER est injoignable${ENCOLOR}"
+    echo -e "${RED}Le serveur $SERVER est injoignable${ENDCOLOR}"
     warning_mail
     exit 112
 else
