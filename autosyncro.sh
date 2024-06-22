@@ -124,7 +124,7 @@ declare -r SSHUSER=$(echo $DESTINATION | cut -d ':' -f1 | cut -d '@' -f1)
 # Vérification de la disponibilité du serveur
 ping -c 2 $SERVER >> $LOG_FILE
 if [[ $? != 0 ]]; then 
-    echo -e "${RED}Le serveur $SERVER est injoignable${ENCOLOR}"
+    echo -e "${RED}Le serveur $SERVER est injoignable${ENDCOLOR}"
     warning_mail
     exit 112
 else
@@ -139,7 +139,7 @@ if [[ $? != 0 ]]; then
 fi
 # Vérification de la présence du dossier source local
 if [[ ! -d "$SOURCE" ]]; then
-    echo -e "${RED}Le dossier $SOURCE n'existe pas${ENCOLOR}"
+    echo -e "${RED}Le dossier $SOURCE n'existe pas${ENDCOLOR}"
     warning_mail
     exit 2
 fi
@@ -149,12 +149,12 @@ check_loc2loc ()
 {
 # Vérification de la présence du dossier source local
 if [[ ! -d "$SOURCE" ]]; then
-    echo -e "${RED}Le dossier $SOURCE n'existe pas${ENCOLOR}"
+    echo -e "${RED}Le dossier $SOURCE n'existe pas${ENDCOLOR}"
     warning_mail
     exit 2
 # Vérification de la présence du dossier de destination local
 elif [[ ! -d "$DESTINATION" ]]; then
-    echo -e "${RED}Le dossier $DESTINATION n'existe pas${ENCOLOR}"
+    echo -e "${RED}Le dossier $DESTINATION n'existe pas${ENDCOLOR}"
     warning_mail
     exit 2
 fi
