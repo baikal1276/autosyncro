@@ -169,10 +169,10 @@ check_dir_fromdist
 # Vérification de l'espace disque
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir SPACE=$(rsync -arvn --delete --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
 else
-    declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
 fi
 #
@@ -194,9 +194,9 @@ echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 # Nombre d'éléments à syncroniser
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir ELEMENTS=$(rsync -arvhn --delete --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+    declare -ir ELEMENTS=$(rsync -arvhn --delete --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
 else
-    declare -ir ELEMENTS=$(rsync -arvhn --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+    declare -ir ELEMENTS=$(rsync -arvhn --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
 fi
 echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
 #
@@ -216,12 +216,12 @@ fi
 #
 if [[ $SYNCRO == "yes" ]]; then
     echo -e "${GREEN}Synchronisation en cours${ENDCOLOR}"
-    rsync -arhv --delete --exclude $EXCLUDE --progress -e "ssh -p $PORT" $SOURCE $DESTINATION >> $LOG_FILE
+    rsync -arhv --delete --exclude={$EXCLUDE} --progress -e "ssh -p $PORT" $SOURCE $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
 else
     echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
-    rsync -arhv --exclude $EXCLUDE --progress -e "ssh -p $PORT" $SOURCE $DESTINATION >> $LOG_FILE
+    rsync -arhv --exclude={$EXCLUDE} --progress -e "ssh -p $PORT" $SOURCE $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
 fi
@@ -242,11 +242,11 @@ declare -r DIRECT=$(echo $DESTINATION | cut -d ':' -f2)
 # Vérification de l'espace disque
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir SPACE=$(rsync -arvn --delete --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
     declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-Z]//g' | sed 's/[/]//g'")
     declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
 else
-    declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
     declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-Z]//g' | sed 's/[/]//g'")
     declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
 fi
@@ -267,10 +267,10 @@ echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 # Nombre d'éléments à syncroniser
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir ELEMENTS=$(rsync -arvn --delete --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep -v -x "./" | wc -l)-4
+    declare -ir ELEMENTS=$(rsync -arvn --delete --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep -v -x "./" | wc -l)-4
     echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
 else
-    declare -ir ELEMENTS=$(rsync -arvn --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep -v -x "./" | wc -l)-4
+    declare -ir ELEMENTS=$(rsync -arvn --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep -v -x "./" | wc -l)-4
     echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
 fi
 #
@@ -290,12 +290,12 @@ fi
 #
 if [[ $SYNCRO == "yes" ]]; then
     echo -e "${GREEN}Synchronisation en cours${ENDCOLOR}"
-    rsync -arhv --delete --exclude $EXCLUDE --progress $SOURCE -e "ssh -p $PORT" $DESTINATION >> $LOG_FILE
+    rsync -arhv --delete --exclude={$EXCLUDE} --progress $SOURCE -e "ssh -p $PORT" $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
 else
     echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
-    rsync -arhv --exclude $EXCLUDE --progress $SOURCE -e "ssh -p $PORT" $DESTINATION >> $LOG_FILE
+    rsync -arhv --exclude={$EXCLUDE} --progress $SOURCE -e "ssh -p $PORT" $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
 fi
@@ -311,10 +311,10 @@ check_dir_loc2loc
 # Vérification de l'espace disque
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir SPACE=$(rsync -arvn --delete --exclude $EXCLUDE $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
 else
-    declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
 fi
 #
@@ -334,10 +334,10 @@ echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 # Nombre d'éléments à syncroniser
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir ELEMENTS=$(rsync -arvhn --delete --exclude $EXCLUDE $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+    declare -ir ELEMENTS=$(rsync -arvhn --delete --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
     echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
 else
-    declare -ir ELEMENTS=$(rsync -arvhn --exclude $EXCLUDE $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+    declare -ir ELEMENTS=$(rsync -arvhn --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
     echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
 fi
 #
@@ -357,12 +357,12 @@ fi
 #
 if [[ $SYNCRO == "yes" ]]; then
     echo -e "${GREEN}Synchronisation en cours${ENDCOLOR}"
-    rsync -arhv --delete --exclude $EXCLUDE --progress $SOURCE $DESTINATION >> $LOG_FILE
+    rsync -arhv --delete --exclude={$EXCLUDE} --progress $SOURCE $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
 else
     echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
-    rsync -arhv --exclude $EXCLUDE --progress $SOURCE $DESTINATION >> $LOG_FILE
+    rsync -arhv --exclude={$EXCLUDE} --progress $SOURCE $DESTINATION >> $LOG_FILE
     check_cmd
     exit 0
 fi
