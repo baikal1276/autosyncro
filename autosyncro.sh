@@ -107,9 +107,9 @@ if [[ $? != 0 ]]; then
     warning_mail
     exit 2
 fi
-# Vérification de la présence du dossier de destination local
-if [[ ! -d "$DESTINATION" ]]; then
-    echo -e "${RED}Le dossier $DESTINATION n'existe pas${ENDCOLOR}"
+# Vérification de la présence du dossier de destination local et des permissions en écriture
+if [[ ! -d "$DESTINATION" || ! -w "$DESTINATION" ]]; then
+    echo -e "${RED}Le dossier $DESTINATION n'existe pas ou n'est pas accessible en écriture${ENDCOLOR}"
     warning_mail
     exit 2
 fi
@@ -131,15 +131,15 @@ else
     echo -e "${GREEN}Le serveur $SERVER répond${ENDCOLOR}"
 fi
 # Vérification de la présence du dossier de destination distant
-ssh -p $PORT "$SSHUSER@$SERVER" "ls $DIRECT > /dev/null 2>&1" > /dev/null 2>&1
+ssh -p $PORT "$SSHUSER@$SERVER" "touch $DIRECT/autosynchrotest.test && rm -f $DIRECT/autosynchrotest.test > /dev/null 2>&1" > /dev/null 2>&1
 if [[ $? != 0 ]]; then
-    echo -e "${RED}Le dossier $DIRECT n'existe pas sur $SERVER ou est inaccessible par $SSHUSER${ENDCOLOR}"
+    echo -e "${RED}Le dossier $DIRECT n'existe pas sur $SERVER ou est inaccessible en écriture par $SSHUSER${ENDCOLOR}"
     warning_mail
     exit 2
 fi
-# Vérification de la présence du dossier source local
-if [[ ! -d "$SOURCE" ]]; then
-    echo -e "${RED}Le dossier $SOURCE n'existe pas${ENDCOLOR}"
+# Vérification de la présence du dossier source local et des permissions
+if [[ ! -d "$SOURCE" || ! -r "$SOURCE" ]]; then
+    echo -e "${RED}Le dossier $SOURCE n'existe pas ou est inaccessible en lecture${ENDCOLOR}"
     warning_mail
     exit 2
 fi
@@ -148,13 +148,13 @@ fi
 check_loc2loc ()
 {
 # Vérification de la présence du dossier source local
-if [[ ! -d "$SOURCE" ]]; then
-    echo -e "${RED}Le dossier $SOURCE n'existe pas${ENDCOLOR}"
+if [[ ! -d "$SOURCE" || ! -r "$SOURCE" ]]; then
+    echo -e "${RED}Le dossier $SOURCE n'existe pas ou est inaccessible en lecture${ENDCOLOR}"
     warning_mail
     exit 2
 # Vérification de la présence du dossier de destination local
-elif [[ ! -d "$DESTINATION" ]]; then
-    echo -e "${RED}Le dossier $DESTINATION n'existe pas${ENDCOLOR}"
+elif [[ ! -d "$DESTINATION" || ! -w "$DESTINATION" ]]; then
+    echo -e "${RED}Le dossier $DESTINATION n'existe pas ou est inaccessible en écriture${ENDCOLOR}"
     warning_mail
     exit 2
 fi
