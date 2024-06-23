@@ -85,7 +85,7 @@ fi
 #
 ### Fonctions de vérifications des cibles sources, destinations et serveurs ###
 #
-check_fromdist ()
+check_dir_fromdist ()
 {
 # Isolation des valeurs relatives au serveur, au dossier source et à l'utilisateur
 declare -r SERVER=$(echo $SOURCE | cut -d ':' -f1 | cut -d '@' -f2)
@@ -115,7 +115,7 @@ if [[ ! -d "$DESTINATION" || ! -w "$DESTINATION" ]]; then
 fi
 }
 #
-check_todist ()
+check_dir_todist ()
 {
 # Isolation des valeurs relatives au serveur, au dossier de destination et à l'utilisateur
 declare -r SERVER=$(echo $DESTINATION | cut -d ':' -f1 | cut -d '@' -f2)
@@ -145,7 +145,7 @@ if [[ ! -d "$SOURCE" || ! -r "$SOURCE" ]]; then
 fi
 }
 #
-check_loc2loc ()
+check_dir_loc2loc ()
 {
 # Vérification de la présence du dossier source local
 if [[ ! -d "$SOURCE" || ! -r "$SOURCE" ]]; then
@@ -164,12 +164,17 @@ fi
 fromdist ()
 {
 #
-check_fromdist
+check_dir_fromdist
 #
 # Vérification de l'espace disque
 #
-declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+if [[ $SYNCRO == "yes" ]]; then
+    declare -ir SPACE=$(rsync -arvn --delete --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+else
+    declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+fi
 #
 # Interruption du script si espace insuffisant
 #
@@ -183,12 +188,16 @@ fi
 #
 declare -r SERVER=$(echo $SOURCE | cut -d ':' -f1)
 declare -r DIRECT=$(echo $SOURCE | cut -d ':' -f2)
-declare -ir SOURCECONT=$(ssh -p $PORT $SERVER "tree $DIRECT | wc -l")-2
+declare -ir SOURCECONT=$(ssh -p $PORT $SERVER "tree $DIRECT | wc -l")-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
 #
-declare -ir ELEMENTS=$(rsync -arvhn --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | wc -l)-4
+if [[ $SYNCRO == "yes" ]]; then
+    declare -ir ELEMENTS=$(rsync -arvhn --delete --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+else
+    declare -ir ELEMENTS=$(rsync -arvhn --exclude $EXCLUDE -e "ssh -p $PORT" $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+fi
 echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
 #
 # Interruption de la sauvegarde si plus de n% ou 0 éléments modifiés depuis la dernière sauvegarde
@@ -201,9 +210,15 @@ if [ "$ELEMENTS" -gt "$ELEMAXI" ]; then
 elif [ "$ELEMENTS" -eq 0 ]; then
     echo -e "${GREEN}Aucune modification à effectuer${ENDCOLOR}"
     exit 0
+fi
 #
 # Lancement de la sauvegarde
 #
+if [[ $SYNCRO == "yes" ]]; then
+    echo -e "${GREEN}Synchronisation en cours${ENDCOLOR}"
+    rsync -arhv --delete --exclude $EXCLUDE --progress -e "ssh -p $PORT" $SOURCE $DESTINATION >> $LOG_FILE
+    check_cmd
+    exit 0
 else
     echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
     rsync -arhv --exclude $EXCLUDE --progress -e "ssh -p $PORT" $SOURCE $DESTINATION >> $LOG_FILE
@@ -217,7 +232,7 @@ fi
 todist ()
 {
 #
-check_todist
+check_dir_todist
 #
 # Récupération des valeurs serveur et dossier
 #
@@ -226,9 +241,15 @@ declare -r DIRECT=$(echo $DESTINATION | cut -d ':' -f2)
 #
 # Vérification de l'espace disque
 #
-declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-Z]//g' | sed 's/[/]//g'")
-declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
+if [[ $SYNCRO == "yes" ]]; then
+    declare -ir SPACE=$(rsync -arvn --delete --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-Z]//g' | sed 's/[/]//g'")
+    declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
+else
+    declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-Z]//g' | sed 's/[/]//g'")
+    declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
+fi
 #
 # Interruption du script si espace insuffisant
 #
@@ -240,13 +261,18 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-2
+declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
 #
-declare -ir ELEMENTS=$(rsync -arvn --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION| wc -l)-4
-echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
+if [[ $SYNCRO == "yes" ]]; then
+    declare -ir ELEMENTS=$(rsync -arvn --delete --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep -v -x "./" | wc -l)-4
+    echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
+else
+    declare -ir ELEMENTS=$(rsync -arvn --exclude $EXCLUDE $SOURCE -e "ssh -p $PORT" $DESTINATION | grep -v -x "./" | wc -l)-4
+    echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
+fi
 #
 # Interruption de la sauvegarde si plus de n% ou 0 éléments modifiés depuis la dernière sauvegarde
 declare -ir ELEMAXI=$(( $SOURCECONT*$MAXI/100 ))
@@ -258,9 +284,15 @@ if [ "$ELEMENTS" -gt "$ELEMAXI" ]; then
 elif [ "$ELEMENTS" -eq 0 ]; then
     echo -e "${GREEN}Aucune modification à effectuer${ENDCOLOR}"
     exit 0
+fi
 #
 # Lancement de la sauvegarde
 #
+if [[ $SYNCRO == "yes" ]]; then
+    echo -e "${GREEN}Synchronisation en cours${ENDCOLOR}"
+    rsync -arhv --delete --exclude $EXCLUDE --progress $SOURCE -e "ssh -p $PORT" $DESTINATION >> $LOG_FILE
+    check_cmd
+    exit 0
 else
     echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
     rsync -arhv --exclude $EXCLUDE --progress $SOURCE -e "ssh -p $PORT" $DESTINATION >> $LOG_FILE
@@ -274,12 +306,17 @@ fi
 loc2loc ()
 {
 #
-check_loc2loc
+check_dir_loc2loc
 #
 # Vérification de l'espace disque
 #
-declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+if [[ $SYNCRO == "yes" ]]; then
+    declare -ir SPACE=$(rsync -arvn --delete --exclude $EXCLUDE $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+else
+    declare -ir SPACE=$(rsync -arvn --exclude $EXCLUDE $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+fi
 #
 # Interruption du script si espace insuffisant
 #
@@ -291,13 +328,18 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-2
+declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
 #
-declare -ir ELEMENTS=$(rsync -arvhn --exclude $EXCLUDE $SOURCE $DESTINATION | wc -l)-4
-echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
+if [[ $SYNCRO == "yes" ]]; then
+    declare -ir ELEMENTS=$(rsync -arvhn --delete --exclude $EXCLUDE $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+    echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
+else
+    declare -ir ELEMENTS=$(rsync -arvhn --exclude $EXCLUDE $SOURCE $DESTINATION | grep -v -x "./" | wc -l)-4
+    echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
+fi
 #
 # Interruption de la sauvegarde si plus de n% ou 0 éléments modifiés depuis la dernière sauvegarde
 declare -ir ELEMAXI=$(( $SOURCECONT*$MAXI/100 ))
@@ -309,9 +351,15 @@ if [ "$ELEMENTS" -gt "$ELEMAXI" ]; then
 elif [ "$ELEMENTS" -eq 0 ]; then
     echo -e "${GREEN}Aucune modification à effectuer${ENDCOLOR}"
     exit 0
+fi
 #
 # Lancement de la sauvegarde
 #
+if [[ $SYNCRO == "yes" ]]; then
+    echo -e "${GREEN}Synchronisation en cours${ENDCOLOR}"
+    rsync -arhv --delete --exclude $EXCLUDE --progress $SOURCE $DESTINATION >> $LOG_FILE
+    check_cmd
+    exit 0
 else
     echo -e "${GREEN}Sauvegarde en cours${ENDCOLOR}"
     rsync -arhv --exclude $EXCLUDE --progress $SOURCE $DESTINATION >> $LOG_FILE
