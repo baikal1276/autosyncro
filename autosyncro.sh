@@ -188,7 +188,7 @@ fi
 #
 declare -r SERVER=$(echo $SOURCE | cut -d ':' -f1)
 declare -r DIRECT=$(echo $SOURCE | cut -d ':' -f2)
-declare -ir SOURCECONT=$(ssh -p $PORT $SERVER "tree $DIRECT | wc -l")-3
+declare -ir SOURCECONT=$(ssh -p $PORT $SERVER "tree -a $DIRECT | wc -l")-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
@@ -261,7 +261,7 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-3
+declare -ir SOURCECONT=$(tree -a $SOURCE | wc -l)-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
@@ -328,7 +328,7 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-3
+declare -ir SOURCECONT=$(tree -a $SOURCE | wc -l)-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser

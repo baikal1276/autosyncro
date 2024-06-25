@@ -27,3 +27,12 @@
 #
 # --- rsync (essentiel pour la sauvegarde) ---
 # --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
+#
+# autosyncro.deb
+# Package pour debian
+# Détails:
+# - vérifie les dépendances bash, rsync et tree
+# - copie autosyncro.sh dans /usr/bin/
+# - copie autosyncro.conf dans /etc/autosyncro/
+# - copie README.md dans /usr/share/autosyncro/
+# - definit par défaut le chemin vers les logs dans /home/$USER/.autosyncro/
