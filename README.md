@@ -28,7 +28,7 @@
 # --- rsync (essentiel pour la sauvegarde) ---
 # --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
 #
-# autosyncro.deb
+# autosyncro-1.1.deb
 # Package pour debian
 # Détails:
 # - vérifie les dépendances bash, rsync et tree
