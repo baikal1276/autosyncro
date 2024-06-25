@@ -6,7 +6,7 @@
 #
 # Par Baikal276
 #
-# 23 juin 2024
+# 25 juin 2024
 #
 # Script de sauvegarde ou synchronisation avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
