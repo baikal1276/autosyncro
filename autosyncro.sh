@@ -21,9 +21,9 @@
 #
 # --- rsync (essentiel pour la sauvegarde) ---
 # --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
-# --- ssh-agent préalablement configuré (optionnel pour la gestion des clés et passphrase si dossier distant défini) ---
+# --- ssh-agent préalablement configuré (optionnel) pour la gestion des clés et passphrase si dossier distant défini ---
 # https://wiki.archlinux.org/title/SSH_keys
-# --- swaks (optionnel - Pour l'envoi d'emails en cas d'échec)
+# --- swaks (optionnel) pour l'envoi d'emails en cas d'échec
 #
 # ///// Dépendances sur le serveur distant: \\\\\
 #
