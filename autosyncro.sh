@@ -65,7 +65,7 @@ warning_mail()
 {
 if [[ $MAILTO =~ "@" ]]; then
     echo "La sauvegarde à échouée, voir $LOG_FILE"
-    swaks -t $MAILTO -s $ASMTP:$PSMTP -tls -au $USMTP -ap $PASSMTP -f $MAILFROM --body "rapport de log" --h-Subject "rapport" --attach $LOG_FILE >> $LOG_FILE
+    swaks -t $MAILTO -s $ASMTP:$PSMTP -tls -au $USMTP -ap $PASSMTP -f $MAILFROM --body "Echec lors de la sauvegarde" --h-Subject "AutoSyncro" --attach $LOG_FILE >> $LOG_FILE
 else
     echo -e "${RED}La sauvegarde à échouée, voir $LOG_FILE${ENDCOLOR}"
 fi
