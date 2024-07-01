@@ -2,13 +2,13 @@
 #                                       ##############
 #                                       # AutoSyncro #
 #                                       ##############
-# Version 1.1
+# Version 1.1.1
 #
 # Par Baikal276
 #
-# 25 juin 2024
+# 01 juillet 2024
 #
-# Script de sauvegarde ou synchronisation avec rsync.
+# Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
 # Vérification de l'espace disque disponible avant sauvegarde.
 # Vérifiaction du nombre d'éléments modifiés avant sauvegarde, valeur maximum configurable en pourcentage.
@@ -21,10 +21,9 @@
 #
 # --- rsync (essentiel pour la sauvegarde) ---
 # --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
-# --- ssh-agent préalablement configuré pour la gestion des clés et passphrase si dossier distant défini ---
+# --- ssh-agent préalablement configuré (optionnel) pour la gestion des clés et passphrase si dossier distant défini ---
 # https://wiki.archlinux.org/title/SSH_keys
-# - (((Optionnel))) s-nail préalablement configuré pour l'envoi d'emails (((Optionnel)))
-# https://www.linuxtricks.fr/wiki/ssmtp-msmtp-mail-s-nail-envoyer-des-emails-facilement-sous-linux-en-ligne-de-commande
+# --- swaks (optionnel) pour l'envoi d'emails en cas d'échec
 #
 # ///// Dépendances sur le serveur distant: \\\\\
 #
@@ -64,8 +63,9 @@ fi
 #
 warning_mail()
 {
-if [[ $MAIL =~ "@" ]]; then
-    echo "La sauvegarde à échouée, voir $LOG_FILE" | s-nail -s "Echec durant la sauvegarde" $MAIL
+if [[ $MAILTO =~ "@" ]]; then
+    echo "La sauvegarde à échouée, voir $LOG_FILE"
+    swaks -t $MAILTO -s $ASMTP:$PSMTP -tls -au $USMTP -ap $PASSMTP -f $MAILFROM --body "Echec lors de la sauvegarde" --h-Subject "AutoSyncro" --attach $LOG_FILE >> $LOG_FILE
 else
     echo -e "${RED}La sauvegarde à échouée, voir $LOG_FILE${ENDCOLOR}"
 fi

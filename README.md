@@ -1,11 +1,12 @@
 # AutoSyncro
-# Version 1.1
+# Version 1.1.1
+# Nouveau dans cette version: remplacement de s-nail par swaks pour l'envoi d'un email en cas d'échec
 #
 # Par Baikal1276
 #
-# 25 juin 2024
+# 01 juillet 2024
 #
-# Script de sauvegarde ou synchronisation avec rsync.
+# Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
 # Vérification de l'espace disque disponible avant sauvegarde.
 # Vérifiaction du nombre d'éléments modifiés avant sauvegarde, valeur maximum configurable en pourcentage.
@@ -18,21 +19,11 @@
 #
 # --- rsync (essentiel pour la sauvegarde) ---
 # --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
-# --- ssh-agent préalablement configuré pour la gestion des clés et passphrase si dossier distant défini ---
+# --- ssh-agent préalablement configuré (optionnel) pour la gestion des clés et passphrase si dossier distant défini ---
 # https://wiki.archlinux.org/title/SSH_keys
-# - (((Optionnel))) s-nail préalablement configuré pour l'envoi d'emails (((Optionnel)))
-# https://www.linuxtricks.fr/wiki/ssmtp-msmtp-mail-s-nail-envoyer-des-emails-facilement-sous-linux-en-ligne-de-commande
+# --- swaks (optionnel) pour l'envoi d'emails en cas d'échec
 #
 # ///// Dépendances sur le serveur distant: \\\\\
 #
 # --- rsync (essentiel pour la sauvegarde) ---
 # --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
-#
-# autosyncro-1.1.deb
-# Package pour debian
-# Détails:
-# - vérifie les dépendances bash, rsync et tree
-# - copie autosyncro.sh dans /usr/bin/
-# - copie autosyncro.conf dans /etc/autosyncro/
-# - copie README.md dans /usr/share/autosyncro/
-# - definit par défaut le chemin vers les logs dans /home/$USER/.autosyncro/
