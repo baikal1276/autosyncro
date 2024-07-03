@@ -6,7 +6,7 @@
 #
 # Par Baikal276
 #
-# 29 juin 2024
+# 01 juillet 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
@@ -170,10 +170,10 @@ check_dir_fromdist
 #
 if [[ $SYNCRO == "yes" ]]; then
     declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 else
     declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 fi
 #
 # Interruption du script si espace insuffisant
@@ -188,7 +188,7 @@ fi
 #
 declare -r SERVER=$(echo $SOURCE | cut -d ':' -f1)
 declare -r DIRECT=$(echo $SOURCE | cut -d ':' -f2)
-declare -ir SOURCECONT=$(ssh -p $PORT $SERVER "tree $DIRECT | wc -l")-3
+declare -ir SOURCECONT=$(ssh -p $PORT $SERVER "tree -a $DIRECT | wc -l")-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
@@ -243,11 +243,11 @@ declare -r DIRECT=$(echo $DESTINATION | cut -d ':' -f2)
 #
 if [[ $SYNCRO == "yes" ]]; then
     declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-    declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-Z]//g' | sed 's/[/]//g'")
+    declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-z]//gI' | sed 's/[/]//g'")
     declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
 else
     declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-    declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-Z]//g' | sed 's/[/]//g'")
+    declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-z]//gI' | sed 's/[/]//g'")
     declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
 fi
 #
@@ -261,7 +261,7 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-3
+declare -ir SOURCECONT=$(tree -a $SOURCE | wc -l)-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
@@ -312,10 +312,10 @@ check_dir_loc2loc
 #
 if [[ $SYNCRO == "yes" ]]; then
     declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 else
     declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
-    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-Z]//g')*1000
+    declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 fi
 #
 # Interruption du script si espace insuffisant
@@ -328,7 +328,7 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree $SOURCE | wc -l)-3
+declare -ir SOURCECONT=$(tree -a $SOURCE | wc -l)-3
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser

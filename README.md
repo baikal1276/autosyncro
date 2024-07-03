@@ -4,7 +4,7 @@
 #
 # Par Baikal1276
 #
-# 29 juin 2024
+# 01 juillet 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
