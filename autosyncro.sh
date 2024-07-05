@@ -2,11 +2,11 @@
 #                                       ##############
 #                                       # AutoSyncro #
 #                                       ##############
-# Version 1.1.1
+# Version 1.1.2
 #
 # Par Baikal276
 #
-# 01 juillet 2024
+# 05 juillet 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.

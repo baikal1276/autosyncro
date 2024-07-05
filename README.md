@@ -1,10 +1,10 @@
 # AutoSyncro
-# Version 1.1.1
+# Version 1.1.2
 # Nouveau dans cette version: remplacement de s-nail par swaks pour l'envoi d'un email en cas d'échec
 #
 # Par Baikal1276
 #
-# 01 juillet 2024
+# 05 juillet 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
