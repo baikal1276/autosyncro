@@ -2,11 +2,11 @@
 #                                       ##############
 #                                       # AutoSyncro #
 #                                       ##############
-# Version 1.1.1
+# Version 1.1.2
 #
 # Par Baikal276
 #
-# 01 juillet 2024
+# 05 juillet 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
@@ -20,7 +20,6 @@
 # ///// Dépendances sur la machine local: \\\\\
 #
 # --- rsync (essentiel pour la sauvegarde) ---
-# --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
 # --- ssh-agent préalablement configuré (optionnel) pour la gestion des clés et passphrase si dossier distant défini ---
 # https://wiki.archlinux.org/title/SSH_keys
 # --- swaks (optionnel) pour l'envoi d'emails en cas d'échec
@@ -28,7 +27,6 @@
 # ///// Dépendances sur le serveur distant: \\\\\
 #
 # --- rsync (essentiel pour la sauvegarde) ---
-# --- tree (essentiel pour la vérification du nombre d'éléments à transférer) ---
 #
 #
 # ##################### CODE ######################
@@ -188,7 +186,7 @@ fi
 #
 declare -r SERVER=$(echo $SOURCE | cut -d ':' -f1)
 declare -r DIRECT=$(echo $SOURCE | cut -d ':' -f2)
-declare -ir SOURCECONT=$(ssh -p $PORT $SERVER "tree -a $DIRECT | wc -l")-3
+declare -ir SOURCECONT=$(rsync -arvn --stats --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "Number of files" | awk '{print $4}' | sed s/[.]//g)-1
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
@@ -261,7 +259,7 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree -a $SOURCE | wc -l)-3
+declare -ir SOURCECONT=$(rsync -arvn --stats --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "Number of files" | awk '{print $4}' | sed s/[.]//g)-1
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser
@@ -328,7 +326,7 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -ir SOURCECONT=$(tree -a $SOURCE | wc -l)-3
+declare -ir SOURCECONT=$(rsync -arvn --stats --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "Number of files" | awk '{print $4}' | sed s/[.]//g)-1
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
 # Nombre d'éléments à syncroniser

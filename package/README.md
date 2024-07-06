@@ -1,10 +1,9 @@
 Package pour Debian et Debian based
 
-AutoSyncro v1.1.1
+AutoSyncro v1.1.2
 
 Dépendences:    - bash
                 - rsync
-                - tree
 Dépendences optionnelles:   - swaks
                             - cron
 
@@ -26,4 +25,4 @@ Contenu du package autosyncro.deb
 └── autosyncro.deb
 
 sha256sum:
-ab850d43f0e571f928eef9508fba4f04fec7552ae998e7aa78e948e7503c100f
+f8989e02e5b6fafbb5436f7ea4645d4a1893c8e7b71fe6794e64da7f995fc1c6
