@@ -1,8 +1,5 @@
 Package pour Debian et Debian based
 
-Editez /etc/autosyncro/autosyncro.conf après le script post-installation pour modifier le chemin vers le fichier de log
-si problème de permissions.
-
 AutoSyncro v1.1.2
 
 Dépendences:    - bash
