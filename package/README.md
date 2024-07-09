@@ -10,6 +10,8 @@ Dépendences:    - bash
 Dépendences optionnelles:   - swaks
                             - cron
 
+Rsync doit être installé sur le serveur distant dans le cas d'une sauvegarde via ssh
+
 Contenu du package autosyncro.deb
 .
 ├── autosyncro
@@ -28,4 +30,4 @@ Contenu du package autosyncro.deb
 └── autosyncro.deb
 
 sha256sum:
-f8989e02e5b6fafbb5436f7ea4645d4a1893c8e7b71fe6794e64da7f995fc1c6
+2dcc5bf88e61b2ac1dd853773f97b17005234277237a1887019fa7ac95c51099
