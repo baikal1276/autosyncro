@@ -6,7 +6,7 @@
 #
 # Par Baikal276
 #
-# 05 juillet 2024
+# 02 août 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
@@ -79,6 +79,42 @@ else
     	echo -e "${RED}ERREUR${ENDCOLOR}"
         warning_mail
 fi
+}
+#
+#
+# Fonction de vérification de la présence du programme rsync en local
+#
+check_rsync ()
+{
+if [[ ! -e "/usr/bin/rsync" ]]; then
+    echo -e "${RED}rsync n'est pas installé sur votre système. Arrêt du programme${ENDCOLOR}"
+    warning_mail
+    exit 2
+fi
+}
+#
+# Fonction de vérification de la présence du programme rsync sur le server distant
+#
+check_rsync_fd ()
+{
+ssh -p "$PORT" "$SERVER" 'bash -s' <<ENDSSH
+    if [[ ! -x /usr/bin/rsync ]]; then
+        echo -e "${RED}rsync n'est pas installé sur le serveur distant${ENDCOLOR}"
+        warning_mail
+        exit 2
+    fi
+ENDSSH
+}
+#
+check_rsync_td ()
+{
+ssh -p "$PORT" "$SERVER" 'bash -s' <<ENDSSH
+    if [[ ! -x /usr/bin/rsync ]]; then
+        echo -e "${RED}rsync n'est pas installé sur le serveur distant${ENDCOLOR}"
+        warning_mail
+        exit 2
+    fi
+ENDSSH
 }
 #
 ### Fonctions de vérifications des cibles sources, destinations et serveurs ###
@@ -161,8 +197,15 @@ fi
 #
 fromdist ()
 {
+# Récupération des valeurs serveur et dossier
+declare -r SERVER=$(echo $SOURCE | cut -d ':' -f1)
+declare -r DIRECT=$(echo $SOURCE | cut -d ':' -f2)
 #
 check_dir_fromdist
+#
+check_rsync
+#
+check_rsync_fd
 #
 # Vérification de l'espace disque
 #
@@ -184,8 +227,6 @@ fi
 #
 # Nombre d'éléments que contient le dossier source
 #
-declare -r SERVER=$(echo $SOURCE | cut -d ':' -f1)
-declare -r DIRECT=$(echo $SOURCE | cut -d ':' -f2)
 declare -ir SOURCECONT=$(rsync -arvn --stats --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "Number of files" | awk '{print $4}' | sed s/[.]//g)-1
 echo -e "${YELLOW}Le dossier source contient $SOURCECONT éléments${ENDCOLOR}"
 #
@@ -201,11 +242,11 @@ echo -e "${YELLOW}$ELEMENTS éléments à modifiés${ENDCOLOR}"
 # Interruption de la sauvegarde si plus de n% ou 0 éléments modifiés depuis la dernière sauvegarde
 declare -ir ELEMAXI=$(( $SOURCECONT*$MAXI/100 ))
 #
-if [ "$ELEMENTS" -gt "$ELEMAXI" ]; then
+if [[ "$ELEMENTS" -gt "$ELEMAXI" ]]; then
     echo -e "${RED}Trop de modifications: $ELEMENTS - interruption du backup${ENDCOLOR}"
     warning_mail
     exit 109
-elif [ "$ELEMENTS" -eq 0 ]; then
+elif [[ "$ELEMENTS" -eq 0 ]]; then
     echo -e "${GREEN}Aucune modification à effectuer${ENDCOLOR}"
     exit 0
 fi
@@ -229,13 +270,15 @@ fi
 #
 todist ()
 {
+# Récupération des valeurs serveur et dossier
+declare -r SERVER=$(echo $DESTINATION | cut -d ':' -f1)
+declare -r DIRECT=$(echo $DESTINATION | cut -d ':' -f2)
 #
 check_dir_todist
 #
-# Récupération des valeurs serveur et dossier
+check_rsync
 #
-declare -r SERVER=$(echo $DESTINATION | cut -d ':' -f1)
-declare -r DIRECT=$(echo $DESTINATION | cut -d ':' -f2)
+check_rsync_td
 #
 # Vérification de l'espace disque
 #
@@ -275,11 +318,11 @@ fi
 # Interruption de la sauvegarde si plus de n% ou 0 éléments modifiés depuis la dernière sauvegarde
 declare -ir ELEMAXI=$(( $SOURCECONT*$MAXI/100 ))
 #
-if [ "$ELEMENTS" -gt "$ELEMAXI" ]; then
+if [[ "$ELEMENTS" -gt "$ELEMAXI" ]]; then
     echo -e "${RED}Trop de modifications: $ELEMENTS - interruption du backup${ENDCOLOR}"
     warning_mail
     exit 109
-elif [ "$ELEMENTS" -eq 0 ]; then
+elif [[ "$ELEMENTS" -eq 0 ]]; then
     echo -e "${GREEN}Aucune modification à effectuer${ENDCOLOR}"
     exit 0
 fi
@@ -305,6 +348,8 @@ loc2loc ()
 {
 #
 check_dir_loc2loc
+#
+check_rsync
 #
 # Vérification de l'espace disque
 #
@@ -342,11 +387,11 @@ fi
 # Interruption de la sauvegarde si plus de n% ou 0 éléments modifiés depuis la dernière sauvegarde
 declare -ir ELEMAXI=$(( $SOURCECONT*$MAXI/100 ))
 #
-if [ "$ELEMENTS" -gt "$ELEMAXI" ]; then
+if [[ "$ELEMENTS" -gt "$ELEMAXI" ]]; then
     echo -e "${RED}Trop de modifications: $ELEMENTS - interruption du backup${ENDCOLOR}"
     warning_mail
     exit 109
-elif [ "$ELEMENTS" -eq 0 ]; then
+elif [[ "$ELEMENTS" -eq 0 ]]; then
     echo -e "${GREEN}Aucune modification à effectuer${ENDCOLOR}"
     exit 0
 fi
