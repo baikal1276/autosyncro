@@ -27,4 +27,4 @@ Contenu du package autosyncro.deb
 └── autosyncro.deb
 
 sha256sum:
-0d66c9772438005a0f3bf06b76d6a685c1f5a134d16116d138347b94fc3940c7
+d30e8f1a0d218f2afc670bfdac101bf3c304ba423c9eb05670e6be33f078d873
