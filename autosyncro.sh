@@ -86,7 +86,7 @@ fi
 #
 check_rsync ()
 {
-if [[ ! -e "/usr/bin/rsync" ]]; then
+if [[ ! -x "/usr/bin/rsync" ]]; then
     echo -e "${RED}rsync n'est pas installé sur votre système. Arrêt du programme${ENDCOLOR}"
     warning_mail
     exit 2
