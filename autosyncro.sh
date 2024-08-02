@@ -95,18 +95,7 @@ fi
 #
 # Fonction de vérification de la présence du programme rsync sur le server distant
 #
-check_rsync_fd ()
-{
-ssh -p "$PORT" "$SERVER" 'bash -s' <<ENDSSH
-    if [[ ! -x /usr/bin/rsync ]]; then
-        echo -e "${RED}rsync n'est pas installé sur le serveur distant${ENDCOLOR}"
-        warning_mail
-        exit 2
-    fi
-ENDSSH
-}
-#
-check_rsync_td ()
+check_rsync_dist ()
 {
 ssh -p "$PORT" "$SERVER" 'bash -s' <<ENDSSH
     if [[ ! -x /usr/bin/rsync ]]; then
@@ -205,7 +194,7 @@ check_dir_fromdist
 #
 check_rsync
 #
-check_rsync_fd
+check_rsync_dist
 #
 # Vérification de l'espace disque
 #
@@ -278,7 +267,7 @@ check_dir_todist
 #
 check_rsync
 #
-check_rsync_td
+check_rsync_dist
 #
 # Vérification de l'espace disque
 #
