@@ -1,10 +1,9 @@
 # AutoSyncro
-# Version 1.1.2
-# Nouveau dans cette version: remplacement de s-nail par swaks pour l'envoi d'un email en cas d'échec
+# Version 1.1.3
 #
 # Par Baikal1276
 #
-# 02 août 2024
+# 30 décembre 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
@@ -15,13 +14,13 @@
 # Nécessite un fichier de configuration "autosyncro.conf" dans le dossier courant du script
 # Editez le fichier de configuaration "autosyncro.conf" pour personnaliser votre sauvegarde
 #
-# ///// Dépendances sur la machine local: \\\\\
+##### Dépendances sur la machine local: #####
 #
 # --- rsync (essentiel pour la sauvegarde) ---
 # --- ssh-agent préalablement configuré (optionnel) pour la gestion des clés et passphrase si dossier distant défini ---
 # https://wiki.archlinux.org/title/SSH_keys
 # --- swaks (optionnel) pour l'envoi d'emails en cas d'échec
 #
-# ///// Dépendances sur le serveur distant: \\\\\
+##### Dépendances sur le serveur distant: #####
 #
 # --- rsync (essentiel pour la sauvegarde) ---
