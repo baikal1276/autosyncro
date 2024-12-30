@@ -2,11 +2,11 @@
 #                                       ##############
 #                                       # AutoSyncro #
 #                                       ##############
-# Version 1.1.2
+# Version 1.1.3
 #
 # Par Baikal276
 #
-# 02 août 2024
+# 30 décembre 2024
 #
 # Script de sauvegarde avec rsync.
 # Dossier distant vers dossier local - dossier local vers dossier distant - dossier local vers dossier local.
@@ -199,10 +199,10 @@ check_rsync_dist
 # Vérification de l'espace disque
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --stats --delete --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "Total transferred file size" | awk '{print $5}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 else
-    declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --stats --exclude={$EXCLUDE} -e "ssh -p $PORT" $SOURCE $DESTINATION | grep "Total transferred file size" | awk '{print $5}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 fi
 #
@@ -272,11 +272,11 @@ check_rsync_dist
 # Vérification de l'espace disque
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --stats --delete --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "Total transferred file size" | awk '{print $5}' | sed 's/[.]//g')
     declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-z]//gI' | sed 's/[/]//g'")
     declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
 else
-    declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --stats --exclude={$EXCLUDE} $SOURCE -e "ssh -p $PORT" $DESTINATION | grep "Total transferred file size" | awk '{print $5}' | sed 's/[.]//g')
     declare TMPFREE=$(ssh -p $PORT $SERVER "df -BK $DIRECT | grep "/" | sed 's/[a-z]//gI' | sed 's/[/]//g'")
     declare -ir FREE=$(echo $TMPFREE | awk '{print $4}')*1000
 fi
@@ -343,10 +343,10 @@ check_rsync
 # Vérification de l'espace disque
 #
 if [[ $SYNCRO == "yes" ]]; then
-    declare -ir SPACE=$(rsync -arvn --delete --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --stats --delete --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "Total transferred file size" | awk '{print $5}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 else
-    declare -ir SPACE=$(rsync -arvn --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "size is" | awk '{print $4}' | sed 's/[.]//g')
+    declare -ir SPACE=$(rsync -arvn --stats --exclude={$EXCLUDE} $SOURCE $DESTINATION | grep "Total transferred file size" | awk '{print $5}' | sed 's/[.]//g')
     declare -ir FREE=$(df -BK "$DESTINATION" | grep "/" | awk '{print $4}' | sed 's/[a-z]//gI')*1000
 fi
 #
